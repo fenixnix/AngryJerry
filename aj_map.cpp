@@ -5,8 +5,6 @@
 #include <unit.h>
 #include "Render/nglrender.h"
 #include "nfmodmngr.h"
-#include "b2objunitmanager.h"
-#include "physx/mrb2datamanager.h"
 
 AJ_Map* AJ_Map::pStatic = nullptr;
 noise::module::Perlin plNoise;
@@ -59,47 +57,47 @@ void AJ_Map::init(int seed)
 #include "gaia/nixgaiatype.h"
 void AJ_Map::render()
 {
-  NGLRender* render = NGLRender::the();
-  render->useTex(nixgaia::SOIL);
-  render->setMode(MODE_TEX);
-  float src[12] = {};
-  float uv[8] = {0,0,0,1,1,0,1,1};
-  //N order
-  for(float i = currentIndex*scenceUnitWidth - scenceUnitWidth;
-      i<currentIndex*scenceUnitWidth+scenceUnitWidth;
-      i+=0.5){
-      src[0] = i;
-      src[1] = -1;
-      src[2] = 0;
+    NGLRender* render = NGLRender::the();
+    render->useTex(nixgaia::SOIL);
+    render->setMode(MODE_TEX);
+    float src[12] = {};
+    float uv[8] = {0,0,0,1,1,0,1,1};
+    //N order
+    for(float i = currentIndex*scenceUnitWidth - scenceUnitWidth;
+        i<currentIndex*scenceUnitWidth+scenceUnitWidth;
+        i+=0.5){
+        src[0] = i;
+        src[1] = -1;
+        src[2] = 0;
 
-      src[3] = src[0];
-      src[4] = getValue(i);
-      src[5] = src[2];
+        src[3] = src[0];
+        src[4] = getValue(i);
+        src[5] = src[2];
 
-      src[6] = i+0.5;
-      src[7] = src[1];
-      src[8] = src[2];
+        src[6] = i+0.5;
+        src[7] = src[1];
+        src[8] = src[2];
 
-      src[9] = src[6];
-      src[10] = getValue(i+0.5);
-      src[11] = src[2];
-      render->drawTextrue(src,uv);
-      src[0] = i;
-      src[1] = -2;
-      src[2] = 0;
+        src[9] = src[6];
+        src[10] = getValue(i+0.5);
+        src[11] = src[2];
+        render->drawTextrue(src,uv);
+        src[0] = i;
+        src[1] = -2;
+        src[2] = 0;
 
-      src[3] = src[0];
-      src[4] = -1;
-      src[5] = src[2];
+        src[3] = src[0];
+        src[4] = -1;
+        src[5] = src[2];
 
-      src[6] = i+0.5;
-      src[7] = src[1];
-      src[8] = src[2];
+        src[6] = i+0.5;
+        src[7] = src[1];
+        src[8] = src[2];
 
-      src[9] = src[6];
-      src[10] = src[4];
-      src[11] = src[2];
-      render->drawTextrue(src,uv);
+        src[9] = src[6];
+        src[10] = src[4];
+        src[11] = src[2];
+        render->drawTextrue(src,uv);
     }
 
 }
@@ -117,18 +115,18 @@ float AJ_Map::getValue(float x)
     return value;
 }
 
+#include "physx/mrb2datamanager.h"
+#include "b2objunitmanager.h"
+
 void AJ_Map::generateEnemy(float x, int index)
 {
     if(x>(scenceUnitWidth/3)){
 
         double value = plNoise.GetValue(x,0.5,0.5)*0.3;
-///
+        ///
         B2Unit *unit;
-        b2Filter filterEnemy;
-        filterEnemy.categoryBits = 0x0002;
-        filterEnemy.maskBits = 0x000b;
-        filterEnemy.groupIndex = -4;
-///
+        b2Filter filterEnemy = B2ObjUnitManager::the()->getFilter("Enemy");
+        ///
 
         //cout<<__FUNCTION__<<value<<endl;
         if(value>0.2){
@@ -137,11 +135,11 @@ void AJ_Map::generateEnemy(float x, int index)
             switch(enemyType){
             case 0: Unit::create("shooter",x,2);break;
             case 1: Unit::create("runner",x,5);
-///
-                unit = B2ObjUnitManager::the()->createB2Unit("beetle",b2Transform(b2Vec2(x,10),b2Rot(0)));
+                ///
+                unit = MRb2DataManager::the()->createUnit("beetle",b2Transform(b2Vec2(x,10),b2Rot(0)));
                 unit->setAllFilter(filterEnemy);
                 MRb2DataManager::the()->initB2UnitShapeData(unit);
-///
+                ///
                 break;
             case 2: Unit::create("grenadiers",x,5);break;
             default:break;
@@ -194,10 +192,10 @@ void AJ_Map::generate(int index)
         }
     }
 
-//    cout<<"left size:"<<scences.size()<<endl;
-//    for(auto itr = scences.begin();itr!=scences.end();itr++){
-//        cout<<itr->first<<endl;
-//    }
+    //    cout<<"left size:"<<scences.size()<<endl;
+    //    for(auto itr = scences.begin();itr!=scences.end();itr++){
+    //        cout<<itr->first<<endl;
+    //    }
 
     //add empty ground
     for(int i = index - 1;i<=index+1;i++){

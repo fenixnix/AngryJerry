@@ -9,6 +9,7 @@ class MRb2ContactListener : public b2ContactListener, public NSingleton<MRb2Cont
 public:
     MRb2ContactListener();
     void BeginContact(b2Contact* contact);
+    void EndContact(b2Contact* contact);
 };
 
 #endif // MRB2CONTACTLISTENER_H

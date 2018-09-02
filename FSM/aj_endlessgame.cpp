@@ -42,13 +42,14 @@ bool AJ_EndlessGame::onExit()
     return true;
 }
 
+#include "physx/mrb2datamanager.h"
+#include "b2fragmentfactory.h"
 void AJ_EndlessGame::update()
 {
-    //cout<<__FUNCTION__<<__LINE__<<endl;
     ObjMngr::the()->update();
-    //cout<<__FUNCTION__<<__LINE__<<endl;
     B2Physx::the()->update();
-    //cout<<__FUNCTION__<<__LINE__<<endl;
+    MRb2DataManager::the()->update();
+    B2FragmentFactory::the()->update();
 }
 
 void AJ_EndlessGame::render()

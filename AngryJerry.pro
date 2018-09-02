@@ -1,5 +1,5 @@
 TEMPLATE = app
-#CONFIG += console
+CONFIG += console
 CONFIG += c++11
 CONFIG -= app_bundle
 CONFIG += qt core
@@ -72,7 +72,6 @@ HEADERS += \
     ../_src/objmngr.h \
     ../_src/structure.h \
     ../_src/bullet.h \
-    ../_src/singleton.h \
     FSM/aj_deadmenu.h \
     ../_src/unitagent.h \
     ../_src/unitaction.h \
@@ -107,3 +106,4 @@ include(D:/workspace/include/libnoise.pri)
 include(D:/workspace/include/fmod.pri)
 include(../_src/render.pri)
 include(../_src/ngui.pri)
+include(../_src/nixTemplate.pri)

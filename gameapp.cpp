@@ -11,6 +11,7 @@
 #include "nfmodmngr.h"
 #include "b2objunitmanager.h"
 #include "physx/mrb2contactlistener.h"
+#include "b2fragmentfactory.h"
 
 GlobalTimer fpsTimer;
 int fpsCnt;
@@ -28,20 +29,30 @@ void GameApp::init(string title, int w, int h)
     if(SDL_Init(SDL_INIT_EVERYTHING) >= 0)
     {
         NGLRender::the()->init(title, w, h);
+
+        //init sound & music system;
         NFMODMngr::the()->init();
+
+        //init physx system;
         B2Physx::the()->init(0,-9.8);
         B2Physx::the()->setListener(MRb2ContactListener::the());
         B2Physx::the()->setDraw(&Global::the()->physxDraw);
+        B2ObjUnitManager::the()->setb2World(B2Physx::the()->world);
+        B2ObjUnitManager::the()->init();
+        b2Filter filter = B2ObjUnitManager::the()->getFilter("Fragment");
+        B2FragmentFactory::the()->init(B2Physx::the()->world,filter);
+
+
         AJ_Map::the()->init(rand());
         NGUI::the()->init();
         Global::the()->iconImageSet.loadImageSet("AJ_Icon.imageset");
         Global::the()->unitImageSet.loadImageSet("Unit001.imageset");
 
+        //
         Global::the()->techTree.loadTree("AJ_Tech.xml");
         Global::the()->techTree.getAllTech();
 
-        B2ObjUnitManager::the()->setb2World(B2Physx::the()->world);
-        B2ObjUnitManager::the()->init();
+
 
         FSM::the()->pushState(new AJ_MainUI);
         isRuning = true;
